@@ -38,12 +38,23 @@ entry:
 		mov dh,0		;磁頭0
 		mov cl,2		;磁區2
 		
+		mov si,0		;計數器
+		
+;重複嘗試讀入磁碟片5次
+retry:
 		mov ah,0x02		;讀入磁碟片
 		mov al,1		;磁區1
 		mov bx,0
 		mov dl,0x00		;A磁碟機
-		int 0x13		;呼叫磁碟片BIOS
-		JC error
+		int 0x13		;call BIOS
+		jnc fin			;出現錯誤跳fin
+		inc si
+		cmp si,5
+		jae error		;超過5次就跳error
+		mov ah,0x00
+		mov dl,0x00		;磁碟機重設
+		int 0x13		;call BIOS 
+		jmp retry
 fin:
 		hlt
 		jmp fin		
