@@ -2,8 +2,8 @@
 ;TAB = 4
 
 org 0x7c00
-jmp entry
 
+jmp entry
 DB 0x90
 DB "HELLOIPL"		;開機磁區名稱
 DW 512				;磁區大小
@@ -31,8 +31,24 @@ entry:
 		mov ss,ax
 		mov sp,0x7c00
 		mov ds,ax
-		mov es,ax
 		
+		mov ax,0x0820
+		mov es,ax
+		mov ch,0		;磁柱0
+		mov dh,0		;磁頭0
+		mov cl,2		;磁區2
+		
+		mov ah,0x02		;讀入磁碟片
+		mov al,1		;磁區1
+		mov bx,0
+		mov dl,0x00		;A磁碟機
+		int 0x13		;呼叫磁碟片BIOS
+		JC error
+fin:
+		hlt
+		jmp fin		
+		
+error:
 		mov si,msg
 		
 putloop:
@@ -45,13 +61,9 @@ putloop:
 		int 0x10			;呼叫視訊BIOS
 		jmp putloop
 		
-fin:
-		hlt
-		jmp fin
-
 msg:
 		DB 0x0a,0x0a		;兩個換行
-		DB "hello, world"
+		DB "load error"
 		DB 0x0a
 		DB 0
 		
