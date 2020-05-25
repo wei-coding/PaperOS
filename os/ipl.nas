@@ -1,5 +1,6 @@
 ;hello-os
 ;TAB = 4
+CYLS equ 10
 
 org 0x7c00
 
@@ -38,6 +39,7 @@ entry:
 		mov dh,0		;磁頭0
 		mov cl,2		;磁區2
 		
+readloop:
 		mov si,0		;計數器
 		
 ;重複嘗試讀入磁碟片5次
@@ -47,7 +49,7 @@ retry:
 		mov bx,0
 		mov dl,0x00		;A磁碟機
 		int 0x13		;call BIOS
-		jnc fin			;出現錯誤跳fin
+		jnc next		
 		inc si
 		cmp si,5
 		jae error		;超過5次就跳error
@@ -55,6 +57,22 @@ retry:
 		mov dl,0x00		;磁碟機重設
 		int 0x13		;call BIOS 
 		jmp retry
+
+next:
+		mov ax,es
+		add ax,0x0020h	;再往後推0x20h bytes，即512/16
+		mov es,ax		;es 沒有 add，所以必須這麼做
+		add cl,1
+		cmp cl,18		;看讀了18個磁區沒
+		jbe readloop
+		mov cl,1
+		add dh,1
+		cmp dh,2
+		jb readloop		;如果 DH <= 2 就到readloop
+		mov dh,0
+		add ch,1
+		cmp ch,CYLS
+		jb readloop
 fin:
 		hlt
 		jmp fin		
