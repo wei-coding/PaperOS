@@ -43,21 +43,23 @@ _io_in16:				;int io_in16(int port)
 	RET
 _io_in32:				;int io_in32(int port)
 	mov edx,[esp+4]		;port
-	mov eax,0
 	in eax,dx
 	RET
 _io_out8:				;void io_out8(int port,int data)
 	mov edx,[esp+4]
 	mov al,[esp+8]
 	out dx,al
+	RET
 _io_out16:				;void io_out(int port,int data)
 	mov edx,[esp+4]
 	mov ax,[esp+8]
 	out dx,al
+	RET
 _io_out32:				;void io_out(int port,int data)
 	mov edx,[esp+4]
 	mov eax,[esp+8]
 	out dx,al
+	RET
 _io_load_eflags:		;int io_load_eflags()
 	PUSHFD
 	POP eax
