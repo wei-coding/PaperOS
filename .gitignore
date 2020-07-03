@@ -1,2 +1,11 @@
 tolset_h/*
 z_tools/*
+*.bin
+*.lst
+*.gas
+*.obj
+bootpack.nas
+bootpack.map
+bootpack.bim
+bootpack.hrb
+haribote.sys
