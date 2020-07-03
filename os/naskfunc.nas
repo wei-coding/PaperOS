@@ -18,9 +18,3 @@
 _io_hlt:				;void io_hlt(void)
 	HLT
 	RET
-	
-_write_mem8:			;void write_mem8(int addr,int data)
-	mov ecx,[esp+4]		;addr is in [esp+4]
-	mov al,[esp+8]		;data is in [esp+8]
-	mov [ecx],al
-	ret
