@@ -27,18 +27,23 @@ void init_palette(void);
 void set_palette(int start,int end,unsigned char *rgb);
 void boxfill8(unsigned char *vram,int xsize,unsigned char c,int x0,int y0,int x1,int y1);
 
+/*Data define*/
+typedef struct {
+	char cyls, leds, vmode, reserved;
+	short scrnx, scrny;
+	char *vram;
+}BOOTINFO;
+
+
 void HariMain(void){
 	char *vram; //address to BYTE[...]
 	int xsize, ysize;
-	short *binfo_scrnx, *binfo_scrny;
-	int *binfo_vram;
+	BOOTINFO *binfo;
 	init_palette();
-	binfo_scrnx = (short *) 0x0ff4;
-	binfo_scrny = (short *) 0x0ff6;
-	binfo_vram = (short *) 0x0ff8;
-	xsize = *binfo_scrnx;
-	ysize = *binfo_scrny;
-	vram = (char *) *binfo_vram;
+	binfo = (BOOTINFO *) 0x0ff0;
+	xsize = binfo->scrnx;
+	ysize = binfo->scrny;
+	vram = binfo->vram;
 	
 	boxfill8(vram,xsize,COL8_008484,0,0,xsize-1,ysize-29);
 	boxfill8(vram,xsize,COL8_C6C6C6,0,ysize-28,xsize-1,ysize-28);
@@ -64,22 +69,22 @@ void HariMain(void){
 
 void init_palette(){
 	static unsigned char table_rgb[16*3] = {
-		0x00, 0x00, 0x00,	/*  0:��*/
-		0xff, 0x00, 0x00,	/*  1:�G��*/
-		0x00, 0xff, 0x00,	/*  2:�G��*/
-		0xff, 0xff, 0x00,	/*  3:�G��*/
-		0x00, 0x00, 0xff,	/*  4:�G��*/
-		0xff, 0x00, 0xff,	/*  5:�G��*/
-		0x00, 0xff, 0xff,	/*  6:�G��*/
-		0xff, 0xff, 0xff,	/*  7:��*/
-		0xc6, 0xc6, 0xc6,	/*  8:�G��*/
-		0x84, 0x00, 0x00,	/*  9:�t��*/
-		0x00, 0x84, 0x00,	/* 10:�t��*/
-		0x84, 0x84, 0x00,	/* 11:�t��*/
-		0x00, 0x00, 0x84,	/* 12:�t��*/
-		0x84, 0x00, 0x84,	/* 13:�t��*/
-		0x00, 0x84, 0x84,	/* 14:�t��*/
-		0x84, 0x84, 0x84	/* 15:�t��*/
+		0x00, 0x00, 0x00,	/*  0:black*/
+		0xff, 0x00, 0x00,	/*  1:light red*/
+		0x00, 0xff, 0x00,	/*  2:light green*/
+		0xff, 0xff, 0x00,	/*  3:light yellow*/
+		0x00, 0x00, 0xff,	/*  4:light blue*/
+		0xff, 0x00, 0xff,	/*  5:light purple*/
+		0x00, 0xff, 0xff,	/*  6:light water*/
+		0xff, 0xff, 0xff,	/*  7:white*/
+		0xc6, 0xc6, 0xc6,	/*  8:loght gray*/
+		0x84, 0x00, 0x00,	/*  9:dark red*/
+		0x00, 0x84, 0x00,	/* 10:dark green*/
+		0x84, 0x84, 0x00,	/* 11:dark yellow*/
+		0x00, 0x00, 0x84,	/* 12:dark blue*/
+		0x84, 0x00, 0x84,	/* 13:dark purple*/
+		0x00, 0x84, 0x84,	/* 14:dark water*/
+		0x84, 0x84, 0x84	/* 15:dark gray*/
 	};
 	set_palette(0,15,table_rgb);
 	return;
